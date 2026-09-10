@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GamePage</title>
+    <style>
+        /* --- GLOBAL STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f0f12; /* Dark background */
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* --- HEADER & SEARCH --- */
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- SEARCH BAR STYLES --- */
+        .search-container {
+            width: 100%;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+            border-radius: 30px;
+            border: 1px solid #2a2a38;
+            background-color: #1a1a24;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .search-input::placeholder {
+            color: #666688;
+        }
+
+        /* --- GAME GRID --- */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* --- GAME CARD LINK --- */
+        .game-card {
+            background-color: #1a1a24;
+            border: 1px solid #2a2a38;
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            transform: translateY(-6px);
+            border-color: #6366f1;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+        }
+
+        /* --- PICTURE & PLACEHOLDER STYLES --- */
+        .game-card img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 170px;
+            background: linear-gradient(135deg, #252538 0%, #151520 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666688;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* --- CARD INFO --- */
+        .card-info {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-info h3 {
+            font-size: 1.2rem;
+            color: #ffffff;
+        }
+
+        .card-info p {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+        }
+
+        .play-btn {
+            margin-top: 0.5rem;
+            align-self: flex-start;
+            font-size: 0.85rem;
+            color: #818cf8;
+            font-weight: bold;
+        }
+
+        .game-card:hover .play-btn {
+            color: #a5b4fc;
+        }
+
+        /* Message when search finds no results */
+        #no-results {
+            display: none;
+            color: #888899;
+            font-size: 1.2rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Title & Search Bar -->
+    <header>
+        <h1>GamePage</h1>
+        <div class="search-container">
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="search-input" 
+                placeholder="Search games by title or genre..."
+            >
+        </div>
+    </header>
+
+    <!-- Grid of Games -->
+    <main class="game-grid" id="gameGrid">
+
+        <!-- GAME 1 -->
+        <a href="offline/among-us.html" class="game-card">
+            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
+            <!-- Example with real picture: <img src="game1.png" alt="Cyber Racer"> -->
+            <div class="img-placeholder">  </div>
+            <div class="card-info">
+                <h3>Among Us</h3>
+                <p>Racing / Sports</p>
+                <span class="play-btn">Play Now &rarr;</span>
+            </div>
+        </a>
+
+        <!-- GAME 2 -->
+        <a href="https://example.com/game2" class="game-card">
+            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
+            <div class="img-placeholder">🖼️ Add Picture Here</div>
+            <div class="card-info">
+                <h3>Space Quest</h3>
+                <p>Action / Adventure</p>
+                <span class="play-btn">Play Now &rarr;</span>
+            </div>
+        </a>
+
+        <!-- GAME 3 -->
+        <a href="https://example.com/game3" class="game-card">
+            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
+            <div class="img-placeholder">🖼️ Add Picture Here</div>
+            <div class="card-info">
+                <h3>Pixel Dungeon</h3>
+                <p>RPG / Retro</p>
+                <span class="play-btn">Play Now &rarr;</span>
+            </div>
+        </a>
+
+        <!-- GAME 4 -->
+        <a href="https://example.com/game4" class="game-card">
+            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
+            <div class="img-placeholder">🖼️ Add Picture Here</div>
+            <div class="card-info">
+                <h3>Shadow Runner</h3>
+                <p>Platformer / Arcade</p>
+                <span class="play-btn">Play Now &rarr;</span>
+            </div>
+        </a>
+
+        <!-- GAME 5 -->
+        <a href="https://example.com/game5" class="game-card">
+            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
+            <div class="img-placeholder">🖼️ Add Picture Here</div>
+            <div class="card-info">
+                <h3>Block Puzzle</h3>
+                <p>Puzzle / Casual</p>
+                <span class="play-btn">Play Now &rarr;</span>
+            </div>
+        </a>
+
+        <!-- GAME 6 -->
+        <a href="https://example.com/game6" class="game-card">
+            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
+            <div class="img-placeholder">🖼️ Add Picture Here</div>
+            <div class="card-info">
+                <h3>Arena Shooter</h3>
+                <p>Action / Multiplayer</p>
+                <span class="play-btn">Play Now &rarr;</span>
+            </div>
+        </a>
+
+    </main>
+
+    <!-- Message shown if no game matches the search -->
+    <p id="no-results">No games found.</p>
+
+    <!-- JavaScript for Live Search Functionality -->
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const gameCards = document.querySelectorAll('.game-card');
+        const noResultsMsg = document.getElementById('no-results');
+
+        searchInput.addEventListener('input', function() {
+            const query = searchInput.value.toLowerCase().trim();
+            let matchesFound = 0;
+
+            gameCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const genre = card.querySelector('p').textContent.toLowerCase();
+
+                // Check if title or genre contains search query
+                if (title.includes(query) || genre.includes(query)) {
+                    card.style.display = 'flex';
+                    matchesFound++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Show "No games found" message if search result is empty
+            if (matchesFound === 0) {
+                noResultsMsg.style.display = 'block';
+            } else {
+                noResultsMsg.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>
