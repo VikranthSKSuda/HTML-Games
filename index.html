@@ -1,281 +1,675 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GamePage</title>
-    <style>
-        /* --- GLOBAL STYLES --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GamePage</title>
+<style>
+  :root{
+    --ink:#14101d;
+    --ink-2:#1b1528;
+    --panel:#221a35;
+    --edge:#37294f;
+    --text:#f3edfb;
+    --dim:#a294bf;
+    --focus:#ffd166;
 
-        body {
-            background-color: #0f0f12; /* Dark background */
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem 1rem;
-        }
+    --c-Racing:#ff6b57;
+    --c-Sports:#3ddc97;
+    --c-Platformer:#5bc8ff;
+    --c-Puzzle:#ffd166;
+    --c-Shooter:#ff4d8d;
+    --c-Strategy:#b18cff;
+    --c-Horror:#8a7bff;
+    --c-Cooking:#ffa24c;
+    --c-Multiplayer:#4de3d0;
+    --c-Idle:#c4d84a;
+    --c-Minecraft:#7bd66b;
+    --c-Sandbox:#ff9ecb;
+    --c-Arcade:#9fb0d0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:"Segoe UI Variable Display","Segoe UI",Inter,system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
 
-        /* --- HEADER & SEARCH --- */
-        header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-            width: 100%;
-            max-width: 600px;
-        }
+  /* ---------- top bar ---------- */
+  .bar{
+    position:sticky;top:0;z-index:20;
+    background:rgba(20,16,29,.88);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--edge);
+  }
+  .bar-in{
+    max-width:1280px;margin:0 auto;
+    padding:18px 20px 14px;
+    display:grid;grid-template-columns:auto 1fr auto;
+    gap:18px;align-items:center;
+  }
+  .wordmark{
+    font-size:1.45rem;font-weight:800;letter-spacing:-.03em;
+    display:flex;align-items:center;gap:9px;white-space:nowrap;
+  }
+  .wordmark b{
+    display:inline-grid;place-items:center;
+    width:30px;height:30px;border-radius:9px;
+    background:linear-gradient(150deg,#ff6b57,#b18cff);
+    color:#14101d;font-size:.95rem;font-weight:900;
+  }
+  .find{position:relative;display:flex;align-items:center}
+  .find svg{position:absolute;left:16px;width:18px;height:18px;stroke:var(--dim);fill:none;stroke-width:2}
+  #q{
+    width:100%;padding:13px 16px 13px 46px;
+    font:inherit;font-size:1.02rem;
+    color:var(--text);background:var(--ink-2);
+    border:1px solid var(--edge);border-radius:12px;outline:none;
+  }
+  #q::placeholder{color:#6f6390}
+  #q:focus{border-color:var(--focus);box-shadow:0 0 0 3px rgba(255,209,102,.18)}
+  .count{font-size:.85rem;color:var(--dim);white-space:nowrap;font-variant-numeric:tabular-nums}
 
-        h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #ffffff;
-            text-transform: uppercase;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-            margin-bottom: 1.5rem;
-        }
+  /* ---------- filters ---------- */
+  .chips{
+    max-width:1280px;margin:0 auto;
+    padding:0 20px 14px;
+    display:flex;gap:8px;flex-wrap:wrap;
+  }
+  .chip{
+    font:inherit;font-size:.83rem;font-weight:600;
+    color:var(--dim);background:transparent;
+    border:1px solid var(--edge);border-radius:999px;
+    padding:6px 13px;cursor:pointer;
+    display:flex;align-items:center;gap:7px;
+  }
+  .chip i{width:7px;height:7px;border-radius:50%;background:var(--dot,#9fb0d0);font-style:normal}
+  .chip:hover{color:var(--text);border-color:#4b3a6b}
+  .chip[aria-pressed="true"]{color:var(--ink);background:var(--text);border-color:var(--text)}
+  .chip:focus-visible,#q:focus-visible,.card:focus-visible,.pin:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
-        /* --- SEARCH BAR STYLES --- */
-        .search-container {
-            width: 100%;
-            position: relative;
-        }
+  /* ---------- layout ---------- */
+  main{max-width:1280px;margin:0 auto;padding:26px 20px 70px}
+  .section-head{
+    display:flex;align-items:baseline;gap:12px;
+    margin:0 0 14px;
+  }
+  .section-head h2{font-size:.95rem;font-weight:700;letter-spacing:-.01em}
+  .section-head span{font-size:.8rem;color:var(--dim)}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(184px,1fr));
+    gap:16px;
+  }
+  #pinned-wrap{margin-bottom:34px}
+  #pinned-wrap.empty{display:none}
+  hr.rule{border:0;border-top:1px solid var(--edge);margin:0 0 26px}
 
-        .search-input {
-            width: 100%;
-            padding: 0.9rem 1.2rem;
-            font-size: 1rem;
-            border-radius: 30px;
-            border: 1px solid #2a2a38;
-            background-color: #1a1a24;
-            color: #ffffff;
-            outline: none;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
+  /* ---------- card ---------- */
+  .card{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--edge);
+    border-radius:14px;overflow:hidden;
+    text-decoration:none;color:inherit;
+    display:flex;flex-direction:column;
+    transition:border-color .15s,transform .15s;
+  }
+  .card:hover{border-color:var(--accent,#6a53a0);transform:translateY(-3px)}
+  .thumb{
+    position:relative;aspect-ratio:4/3;width:100%;
+    background:linear-gradient(135deg,#2b2142,#1a1329);
+    display:grid;place-items:center;overflow:hidden;
+  }
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb img[data-broken]{display:none}
+  .initials{
+    font-size:2.1rem;font-weight:900;letter-spacing:-.05em;
+    color:var(--accent,#9fb0d0);opacity:.92;
+    text-shadow:0 2px 0 rgba(0,0,0,.25);
+  }
+  .thumb::after{
+    content:"";position:absolute;inset:auto 0 0 0;height:3px;
+    background:var(--accent,#9fb0d0);opacity:.85;
+  }
+  .meta{padding:11px 12px 13px;display:flex;flex-direction:column;gap:3px}
+  .meta h3{font-size:.95rem;font-weight:650;letter-spacing:-.01em;line-height:1.25}
+  .meta p{font-size:.76rem;color:var(--dim);display:flex;align-items:center;gap:6px}
+  .tp{
+    color:var(--ink);background:var(--accent,#9fb0d0);
+    border-radius:4px;padding:0 4px;font-size:.66rem;font-weight:800;
+  }
+  .pin{
+    position:absolute;top:8px;right:8px;z-index:2;
+    width:30px;height:30px;border-radius:9px;
+    border:1px solid var(--edge);background:rgba(20,16,29,.72);
+    color:var(--dim);cursor:pointer;display:grid;place-items:center;
+    font-size:.95rem;line-height:1;
+  }
+  .pin:hover{color:var(--focus)}
+  .pin[aria-pressed="true"]{color:var(--focus);border-color:var(--focus)}
 
-        .search-input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
-        }
+  /* ---------- empty ---------- */
+  #empty{display:none;padding:56px 0;text-align:center}
+  #empty p{color:var(--dim);font-size:1rem}
+  #empty button{
+    margin-top:14px;font:inherit;font-weight:600;cursor:pointer;
+    color:var(--ink);background:var(--text);border:0;border-radius:10px;padding:9px 16px;
+  }
 
-        .search-input::placeholder {
-            color: #666688;
-        }
+  .hint{margin-top:44px;font-size:.78rem;color:#6f6390;text-align:center}
+  kbd{
+    background:var(--ink-2);border:1px solid var(--edge);border-bottom-width:2px;
+    border-radius:5px;padding:1px 6px;font:inherit;font-size:.72rem;color:var(--dim);
+  }
 
-        /* --- GAME GRID --- */
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 2rem;
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        /* --- GAME CARD LINK --- */
-        .game-card {
-            background-color: #1a1a24;
-            border: 1px solid #2a2a38;
-            border-radius: 12px;
-            overflow: hidden;
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .game-card:hover {
-            transform: translateY(-6px);
-            border-color: #6366f1;
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
-        }
-
-        /* --- PICTURE & PLACEHOLDER STYLES --- */
-        .game-card img {
-            width: 100%;
-            height: 170px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .img-placeholder {
-            width: 100%;
-            height: 170px;
-            background: linear-gradient(135deg, #252538 0%, #151520 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666688;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* --- CARD INFO --- */
-        .card-info {
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .card-info h3 {
-            font-size: 1.2rem;
-            color: #ffffff;
-        }
-
-        .card-info p {
-            font-size: 0.85rem;
-            color: #aaaaaa;
-        }
-
-        .play-btn {
-            margin-top: 0.5rem;
-            align-self: flex-start;
-            font-size: 0.85rem;
-            color: #818cf8;
-            font-weight: bold;
-        }
-
-        .game-card:hover .play-btn {
-            color: #a5b4fc;
-        }
-
-        /* Message when search finds no results */
-        #no-results {
-            display: none;
-            color: #888899;
-            font-size: 1.2rem;
-            margin-top: 2rem;
-        }
-    </style>
+  @media (max-width:720px){
+    .bar-in{grid-template-columns:1fr auto;gap:12px 14px}
+    .find{grid-column:1 / -1;order:3}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:12px}
+    .initials{font-size:1.6rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;scroll-behavior:auto}
+    .card:hover{transform:none}
+  }
+</style>
 </head>
 <body>
 
-    <!-- Header Title & Search Bar -->
-    <header>
-        <h1>GamePage</h1>
-        <div class="search-container">
-            <input 
-                type="text" 
-                id="searchInput" 
-                class="search-input" 
-                placeholder="Search games by title or genre..."
-            >
-        </div>
-    </header>
+<header class="bar">
+  <div class="bar-in">
+    <div class="wordmark"><b>GP</b>GamePage</div>
+    <div class="find">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Search 300 games — title or category">
+    </div>
+    <div class="count" id="count"></div>
+  </div>
+  <div class="chips" id="chips"></div>
+</header>
 
-    <!-- Grid of Games -->
-    <main class="game-grid" id="gameGrid">
+<main>
+  <section id="pinned-wrap" class="empty">
+    <div class="section-head"><h2>Pinned</h2><span>your quick launches</span></div>
+    <div class="grid" id="pinned"></div>
+    <hr class="rule">
+  </section>
 
-        <!-- GAME 1 -->
-        <a href="offline/1-on-1-soccer.html" class="game-card">
-            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
-            <!-- Example with real picture: <img src="game1.png" alt="Cyber Racer"> -->
-            <div class="img-placeholder"> <img src="images/Among.png" alt="Among Us"> </div>
-            <div class="card-info">
-                <h3>1 on 1 Soccer</h3>
-                <p>2 player</p>
-                <span class="play-btn">Play Now &rarr;</span>
-            </div>
-        </a>
+  <section>
+    <div class="section-head"><h2 id="all-head">All games</h2><span id="all-sub"></span></div>
+    <div class="grid" id="grid"></div>
+  </section>
 
-        <!-- GAME 2 -->
-        <a href="https://example.com/game2" class="game-card">
-            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
-            <div class="img-placeholder">🖼️ Add Picture Here</div>
-            <div class="card-info">
-                <h3>Space Quest</h3>
-                <p>Action / Adventure</p>
-                <span class="play-btn">Play Now &rarr;</span>
-            </div>
-        </a>
+  <div id="empty">
+    <p>Nothing matches that search.</p>
+    <button id="clear">Show all games</button>
+  </div>
 
-        <!-- GAME 3 -->
-        <a href="https://example.com/game3" class="game-card">
-            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
-            <div class="img-placeholder">🖼️ Add Picture Here</div>
-            <div class="card-info">
-                <h3>Pixel Dungeon</h3>
-                <p>RPG / Retro</p>
-                <span class="play-btn">Play Now &rarr;</span>
-            </div>
-        </a>
+  <p class="hint">Press <kbd>/</kbd> to search · <kbd>Enter</kbd> launches the first result · <kbd>Esc</kbd> clears</p>
+</main>
 
-        <!-- GAME 4 -->
-        <a href="https://example.com/game4" class="game-card">
-            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
-            <div class="img-placeholder">🖼️ Add Picture Here</div>
-            <div class="card-info">
-                <h3>Shadow Runner</h3>
-                <p>Platformer / Arcade</p>
-                <span class="play-btn">Play Now &rarr;</span>
-            </div>
-        </a>
+<script>
+/* ============================================================
+   GAME LIST — add a game by adding one line here.
+     t = title shown on the card
+     f = file name inside the /offline folder
+     s = image name: images/<s>.PNG
+     c = category (drives the colour + filter chips)
+     p = 1 if it is a 2-player game (optional)
+   ============================================================ */
+const GAMES = [
+  {"t": "1 on 1 Soccer", "f": "1-on-1-soccer.html", "s": "1-on-1-soccer", "c": "Sports", "p": 1},
+  {"t": "1 on 1 Tennis", "f": "1-on-1-tennis.html", "s": "1-on-1-tennis", "c": "Sports", "p": 1},
+  {"t": "10 Minutes Till Dawn", "f": "10-minutes-till-dawn.html", "s": "10-minutes-till-dawn", "c": "Shooter"},
+  {"t": "12 MiniBattles", "f": "12-mini-battles.html", "s": "12-mini-battles", "c": "Sandbox", "p": 1},
+  {"t": "1v1.LOL", "f": "1v1.lol.html", "s": "1v1.lol", "c": "Multiplayer"},
+  {"t": "2048", "f": "2048.html", "s": "2048", "c": "Puzzle"},
+  {"t": "2048 Cupcakes", "f": "2048-cupcakes.html", "s": "2048-cupcakes", "c": "Puzzle"},
+  {"t": "3D Flight Simulator", "f": "3D-flight-simulator.html", "s": "3D-flight-simulator", "c": "Sandbox"},
+  {"t": "8 Ball Classic", "f": "8-ball-classic.html", "s": "8-ball-classic", "c": "Sports"},
+  {"t": "Agar.io Lite", "f": "agar-io-lite.html", "s": "agar-io-lite", "c": "Multiplayer"},
+  {"t": "Age of War", "f": "age-of-war.html", "s": "age-of-war", "c": "Strategy"},
+  {"t": "Age of War 2", "f": "age-of-war-2.html", "s": "age-of-war-2", "c": "Strategy"},
+  {"t": "Ages of Conflict", "f": "ages-of-conflict.html", "s": "ages-of-conflict", "c": "Strategy"},
+  {"t": "Among Us", "f": "among-us.html", "s": "among-us", "c": "Multiplayer"},
+  {"t": "Angry Birds", "f": "angry-birds.html", "s": "angry-birds", "c": "Sandbox"},
+  {"t": "Angry Birds Showdown", "f": "angry-birds-showdown.html", "s": "angry-birds-showdown", "c": "Sandbox"},
+  {"t": "Angry Birds Space", "f": "angry-birds-space.html", "s": "angry-birds-space", "c": "Sandbox"},
+  {"t": "Awesome Tanks", "f": "awesome-tanks.html", "s": "awesome-tanks", "c": "Shooter"},
+  {"t": "Awesome Tanks 2", "f": "awesome-tanks-2.html", "s": "awesome-tanks-2", "c": "Shooter"},
+  {"t": "Backrooms", "f": "backrooms.html", "s": "backrooms", "c": "Horror"},
+  {"t": "Bacon May Die", "f": "bacon-may-die.html", "s": "bacon-may-die", "c": "Platformer"},
+  {"t": "Bad Ice Cream", "f": "bad-ice-cream.html", "s": "bad-ice-cream", "c": "Platformer"},
+  {"t": "Bad Ice Cream 2", "f": "bad-ice-cream-2.html", "s": "bad-ice-cream-2", "c": "Platformer"},
+  {"t": "Bad Ice Cream 3", "f": "bad-ice-cream-3.html", "s": "bad-ice-cream-3", "c": "Platformer"},
+  {"t": "Bad Parenting", "f": "bad-parenting.html", "s": "bad-parenting", "c": "Horror"},
+  {"t": "Bad Piggies", "f": "bad-piggies.html", "s": "bad-piggies", "c": "Sandbox"},
+  {"t": "Baldi's Basics", "f": "baldis-basics.html", "s": "baldis-basics", "c": "Horror"},
+  {"t": "Baseball Bros", "f": "baseball-bros.html", "s": "baseball-bros", "c": "Sports", "p": 1},
+  {"t": "Basket Bros", "f": "basket-bros.html", "s": "basket-bros", "c": "Sports", "p": 1},
+  {"t": "Basket Random", "f": "basket-random.html", "s": "basket-random", "c": "Sports", "p": 1},
+  {"t": "Basketball Legends", "f": "basketball-legends.html", "s": "basketball-legends", "c": "Sports"},
+  {"t": "Basketball Stars", "f": "basketball-stars.html", "s": "basketball-stars", "c": "Sports"},
+  {"t": "Bit Planes", "f": "bit-planes.htm", "s": "bit-planes", "c": "Sandbox"},
+  {"t": "BitLife", "f": "bitlife.html", "s": "bitlife", "c": "Sandbox"},
+  {"t": "Blocky Snakes", "f": "blocky-snakes.html", "s": "blocky-snakes", "c": "Platformer"},
+  {"t": "Bloons TD", "f": "bloons-TD.html", "s": "bloons-TD", "c": "Strategy"},
+  {"t": "Bloons TD 2", "f": "bloons-TD-2.html", "s": "bloons-TD-2", "c": "Strategy"},
+  {"t": "Bloons TD 3", "f": "bloons-TD-3.html", "s": "bloons-TD-3", "c": "Strategy"},
+  {"t": "Bloons TD 4", "f": "bloons-TD-4.html", "s": "bloons-TD-4", "c": "Strategy"},
+  {"t": "Bloons TD 5", "f": "bloons-TD-5.html", "s": "bloons-TD-5", "c": "Strategy"},
+  {"t": "Bloxorz", "f": "bloxorz.html", "s": "bloxorz", "c": "Puzzle"},
+  {"t": "Blumgi Racers", "f": "blumgi-racers.html", "s": "blumgi-racers", "c": "Racing"},
+  {"t": "Blumgi Rocket", "f": "blumgi-rocket.html", "s": "blumgi-rocket", "c": "Racing"},
+  {"t": "Bob the Robber", "f": "bob-the-robber.html", "s": "bob-the-robber", "c": "Puzzle"},
+  {"t": "Bob the Robber 2", "f": "bob-the-robber-2.html", "s": "bob-the-robber-2", "c": "Puzzle"},
+  {"t": "Bob the Robber 5", "f": "bob-the-robber-5.html", "s": "bob-the-robber-5", "c": "Puzzle"},
+  {"t": "Bouncy Motors", "f": "bouncy-motors.html", "s": "bouncy-motors", "c": "Racing"},
+  {"t": "Bow Masters", "f": "bow-masters.html", "s": "bow-masters", "c": "Shooter"},
+  {"t": "Boxing Random", "f": "boxing-random.htm", "s": "boxing-random", "c": "Sports", "p": 1},
+  {"t": "Breaking the Bank", "f": "breaking-the-bank.html", "s": "breaking-the-bank", "c": "Puzzle"},
+  {"t": "Bubble Shooter", "f": "bubble-shooter.html", "s": "bubble-shooter", "c": "Shooter"},
+  {"t": "Candy Crush", "f": "candy-crush.html", "s": "candy-crush", "c": "Puzzle"},
+  {"t": "Capybara Clicker", "f": "capybara-clicker.html", "s": "capybara-clicker", "c": "Idle"},
+  {"t": "Car Drawing", "f": "car-drawing.html", "s": "car-drawing", "c": "Puzzle"},
+  {"t": "Car King Arena", "f": "car-king-arena.html", "s": "car-king-arena", "c": "Racing"},
+  {"t": "Chess", "f": "chess.html", "s": "chess", "c": "Puzzle", "p": 1},
+  {"t": "Choppy Orc", "f": "choppy-orc.html", "s": "choppy-orc", "c": "Platformer"},
+  {"t": "circloO", "f": "circloO.html", "s": "circloO", "c": "Platformer"},
+  {"t": "circloO 2", "f": "circloO-2.html", "s": "circloO-2", "c": "Platformer"},
+  {"t": "Clash of Vikings", "f": "clash-of-vikings.html", "s": "clash-of-vikings", "c": "Shooter"},
+  {"t": "Cleanup.io", "f": "cleanup-io.html", "s": "cleanup-io", "c": "Multiplayer"},
+  {"t": "Cluster Rush", "f": "cluster-rush.html", "s": "cluster-rush", "c": "Racing"},
+  {"t": "Cookie Clicker", "f": "cookie-clicker.htm", "s": "cookie-clicker", "c": "Idle"},
+  {"t": "Crazy Cars", "f": "crazy-cars.html", "s": "crazy-cars", "c": "Racing"},
+  {"t": "Crazy Cattle 3D", "f": "crazy-cattle-3D.html", "s": "crazy-cattle-3D", "c": "Sandbox"},
+  {"t": "Crazy Crash Landing", "f": "crazy-crash-landing.html", "s": "crazy-crash-landing", "c": "Sandbox"},
+  {"t": "Crazy Motorcycle", "f": "crazy-motorcycle.html", "s": "crazy-motorcycle", "c": "Racing"},
+  {"t": "Crossy Road", "f": "crossy-road.htm", "s": "crossy-road", "c": "Platformer"},
+  {"t": "Cut the Rope", "f": "cut-the-rope.html", "s": "cut-the-rope", "c": "Puzzle"},
+  {"t": "Dadish", "f": "dadish.html", "s": "dadish", "c": "Platformer"},
+  {"t": "Dadish 2", "f": "dadish-2.html", "s": "dadish-2", "c": "Platformer"},
+  {"t": "Dadish 3", "f": "dadish-3.html", "s": "dadish-3", "c": "Platformer"},
+  {"t": "Death Chase", "f": "death-chase.html", "s": "death-chase", "c": "Racing"},
+  {"t": "Death Run 3D", "f": "death-run-3D.html", "s": "death-run-3D", "c": "Platformer"},
+  {"t": "Demolition Derby Crash Racing", "f": "demolition-derby-crash-racing.html", "s": "demolition-derby-crash-racing", "c": "Racing"},
+  {"t": "Doodle Jump", "f": "doodle-jump.html", "s": "doodle-jump", "c": "Platformer"},
+  {"t": "Draw Climber", "f": "draw-climber.html", "s": "draw-climber", "c": "Puzzle"},
+  {"t": "Dreadhead Parkour", "f": "dreadhead-parkour.htm", "s": "dreadhead-parkour", "c": "Platformer"},
+  {"t": "Drift Boss", "f": "drift-boss.htm", "s": "drift-boss", "c": "Racing"},
+  {"t": "Drive Mad", "f": "drive-mad.htm", "s": "drive-mad", "c": "Racing"},
+  {"t": "Duck Life", "f": "duck-life.html", "s": "duck-life", "c": "Strategy"},
+  {"t": "Duck Life 2", "f": "duck-life-2.html", "s": "duck-life-2", "c": "Strategy"},
+  {"t": "Duck Life 3", "f": "duck-life-3.html", "s": "duck-life-3", "c": "Strategy"},
+  {"t": "Duck Life 4", "f": "duck-life-4.html", "s": "duck-life-4", "c": "Strategy"},
+  {"t": "Duck Life 5", "f": "duck-life-5.html", "s": "duck-life-5", "c": "Strategy"},
+  {"t": "Ducklings.io", "f": "ducklings-io.html", "s": "ducklings-io", "c": "Multiplayer"},
+  {"t": "Eagle Ride", "f": "eagle-ride.html", "s": "eagle-ride", "c": "Platformer"},
+  {"t": "Earn to Die", "f": "earn-to-die.html", "s": "earn-to-die", "c": "Racing"},
+  {"t": "Earn to Die 2", "f": "earn-to-die-2.html", "s": "earn-to-die-2", "c": "Racing"},
+  {"t": "Eggy Car", "f": "eggy-car.html", "s": "eggy-car", "c": "Racing"},
+  {"t": "Elastic Face", "f": "elastic-face.htm", "s": "elastic-face", "c": "Sandbox"},
+  {"t": "Escape Road", "f": "escape-road.html", "s": "escape-road", "c": "Racing"},
+  {"t": "Escape Road 2", "f": "escape-road-2.html", "s": "escape-road-2", "c": "Racing"},
+  {"t": "Escaping the Prison", "f": "escaping-the-prison.html", "s": "escaping-the-prison", "c": "Puzzle"},
+  {"t": "Evil Glitch", "f": "evil-glitch.html", "s": "evil-glitch", "c": "Horror"},
+  {"t": "Fancy Pants Adventure", "f": "fancy-pants-adventure.html", "s": "fancy-pants-adventure", "c": "Platformer"},
+  {"t": "Fancy Pants Adventure 2", "f": "fancy-pants-adventure-2.html", "s": "fancy-pants-adventure-2", "c": "Platformer"},
+  {"t": "Fireboy and Watergirl", "f": "fireboy-and-watergirl.html", "s": "fireboy-and-watergirl", "c": "Platformer"},
+  {"t": "Fireboy and Watergirl 2", "f": "fireboy-and-watergirl-2.html", "s": "fireboy-and-watergirl-2", "c": "Platformer"},
+  {"t": "Fireboy and Watergirl 3", "f": "fireboy-and-watergirl-3.html", "s": "fireboy-and-watergirl-3", "c": "Platformer"},
+  {"t": "Fireboy and Watergirl 4", "f": "fireboy-and-watergirl-4.html", "s": "fireboy-and-watergirl-4", "c": "Platformer"},
+  {"t": "Flappy Bird", "f": "flappy-bird.html", "s": "flappy-bird", "c": "Platformer"},
+  {"t": "Flood Runner 2", "f": "flood-runner-2.html", "s": "flood-runner-2", "c": "Platformer"},
+  {"t": "Flood Runner 3", "f": "flood-runner-3.html", "s": "flood-runner-3", "c": "Platformer"},
+  {"t": "Flood Runner 4", "f": "flood-runner-4.html", "s": "flood-runner-4", "c": "Platformer"},
+  {"t": "FNAF", "f": "fnaf.html", "s": "fnaf", "c": "Horror"},
+  {"t": "FNAF 2", "f": "fnaf-2.html", "s": "fnaf-2", "c": "Horror"},
+  {"t": "FNAF 3", "f": "fnaf-3.html", "s": "fnaf-3", "c": "Horror"},
+  {"t": "FNAF 4", "f": "fnaf-4.html", "s": "fnaf-4", "c": "Horror"},
+  {"t": "Football Bros", "f": "football-bros.html", "s": "football-bros", "c": "Sports", "p": 1},
+  {"t": "Football Legends", "f": "football-legends.html", "s": "football-legends", "c": "Sports"},
+  {"t": "Free Rider 3", "f": "free-rider-3.html", "s": "free-rider-3", "c": "Racing"},
+  {"t": "Fruit Ninja", "f": "fruit-ninja.html", "s": "fruit-ninja", "c": "Platformer"},
+  {"t": "Funny Battle", "f": "funny-battle.html", "s": "funny-battle", "c": "Shooter"},
+  {"t": "Funny Battle 2", "f": "funny-battle-2.html", "s": "funny-battle-2", "c": "Shooter"},
+  {"t": "Funny Mad Racing", "f": "funny-mad-racing.html", "s": "funny-mad-racing", "c": "Racing"},
+  {"t": "Funny Shooter 2", "f": "funny-shooter-2.html", "s": "funny-shooter-2", "c": "Shooter"},
+  {"t": "Geometry Dash", "f": "geometry-dash.html", "s": "geometry-dash", "c": "Platformer"},
+  {"t": "Geometry Dash Lite", "f": "geometry-dash-lite.html", "s": "geometry-dash-lite", "c": "Platformer"},
+  {"t": "Geometry Vibes", "f": "geometry-vibes.html", "s": "geometry-vibes", "c": "Platformer"},
+  {"t": "Get on Top", "f": "get-on-top.html", "s": "get-on-top", "c": "Sandbox", "p": 1},
+  {"t": "Getaway Shootout", "f": "getaway-shootout.htm", "s": "getaway-shootout", "c": "Shooter", "p": 1},
+  {"t": "Gladi Hoppers", "f": "gladi-hoppers.html", "s": "gladi-hoppers", "c": "Sports", "p": 1},
+  {"t": "Google Baseball", "f": "google-baseball.html", "s": "google-baseball", "c": "Sports"},
+  {"t": "Google Dino", "f": "google-dino.html", "s": "google-dino", "c": "Platformer"},
+  {"t": "Granny", "f": "granny.html", "s": "granny", "c": "Horror"},
+  {"t": "Granny 2", "f": "granny-2.html", "s": "granny-2", "c": "Horror"},
+  {"t": "Guess Their Answer", "f": "guess-their-answer.html", "s": "guess-their-answer", "c": "Puzzle"},
+  {"t": "Hanger 2", "f": "hanger-2.html", "s": "hanger-2", "c": "Platformer"},
+  {"t": "Happy Wheels", "f": "happy-wheels.html", "s": "happy-wheels", "c": "Sandbox"},
+  {"t": "Helix Jump", "f": "helix-jump.html", "s": "helix-jump", "c": "Platformer"},
+  {"t": "Highway Traffic", "f": "highway-traffic.html", "s": "highway-traffic", "c": "Racing"},
+  {"t": "Hill Climb Racing Lite", "f": "hill-climb-racing-lite.html", "s": "hill-climb-racing-lite", "c": "Racing"},
+  {"t": "Hole.io", "f": "hole-io.html", "s": "hole-io", "c": "Multiplayer"},
+  {"t": "House of Hazards", "f": "house-of-hazards.html", "s": "house-of-hazards", "c": "Sandbox", "p": 1},
+  {"t": "Hover Racer Drive", "f": "hover-racer-drive.html", "s": "hover-racer-drive", "c": "Racing"},
+  {"t": "Idle Breakout", "f": "idle-breakout.html", "s": "idle-breakout", "c": "Idle"},
+  {"t": "Iron Snout", "f": "iron-snout.html", "s": "iron-snout", "c": "Platformer", "p": 1},
+  {"t": "Jetpack Joyride", "f": "jetpack-joyride.html", "s": "jetpack-joyride", "c": "Platformer"},
+  {"t": "Johnny Trigger", "f": "johnny-trigger.html", "s": "johnny-trigger", "c": "Shooter"},
+  {"t": "Jumping Shell", "f": "jumping-shell.html", "s": "jumping-shell", "c": "Platformer"},
+  {"t": "Karate Bros", "f": "karate-bros.html", "s": "karate-bros", "c": "Sports", "p": 1},
+  {"t": "Kart Bros", "f": "kart-bros.html", "s": "kart-bros", "c": "Racing", "p": 1},
+  {"t": "Learn to Fly", "f": "learn-to-fly.html", "s": "learn-to-fly", "c": "Strategy"},
+  {"t": "Learn to Fly 2", "f": "learn-to-fly-2.html", "s": "learn-to-fly-2", "c": "Strategy"},
+  {"t": "Learn to Fly 3", "f": "learn-to-fly-3.html", "s": "learn-to-fly-3", "c": "Strategy"},
+  {"t": "Learn to Fly Idle", "f": "learn-to-fly-idle.html", "s": "learn-to-fly-idle", "c": "Strategy"},
+  {"t": "Level Devil", "f": "level-devil.html", "s": "level-devil", "c": "Puzzle"},
+  {"t": "Madalin Stunt Cars 2", "f": "madalin-stunt-cars-2.html", "s": "madalin-stunt-cars-2", "c": "Racing"},
+  {"t": "Melon Playground", "f": "melon-playground.html", "s": "melon-playground", "c": "Sandbox"},
+  {"t": "Merge Round Racers", "f": "merge-round-racers.html", "s": "merge-round-racers", "c": "Racing"},
+  {"t": "Minecraft 1.12", "f": "1.12.html", "s": "1.12", "c": "Minecraft"},
+  {"t": "Minecraft 1.5", "f": "1.5.html", "s": "1.5", "c": "Minecraft"},
+  {"t": "Minecraft 1.8", "f": "1.8.html", "s": "1.8", "c": "Minecraft"},
+  {"t": "Minecraft Alpha 1.2.6", "f": "Alpha_1.2.6.html", "s": "Alpha_1.2.6", "c": "Minecraft"},
+  {"t": "Minecraft Beta 1.3", "f": "Beta_1.3.html", "s": "Beta_1.3", "c": "Minecraft"},
+  {"t": "Minecraft Indev", "f": "Indev.html", "s": "Indev", "c": "Minecraft"},
+  {"t": "Minesweeper", "f": "minesweeper.html", "s": "minesweeper", "c": "Puzzle"},
+  {"t": "Monkey Mart", "f": "monkey-mart.htm", "s": "monkey-mart", "c": "Idle"},
+  {"t": "Monster Tracks", "f": "monster-tracks.html", "s": "monster-tracks", "c": "Racing"},
+  {"t": "Moto X3m", "f": "moto-x3m.htm", "s": "moto-x3m", "c": "Racing"},
+  {"t": "Moto X3m 2", "f": "moto-x3m-2.html", "s": "moto-x3m-2", "c": "Racing"},
+  {"t": "Moto X3m 3", "f": "moto-x3m-3.html", "s": "moto-x3m-3", "c": "Racing"},
+  {"t": "Moto X3m Pool Party", "f": "moto-x3m-pool-party.html", "s": "moto-x3m-pool-party", "c": "Racing"},
+  {"t": "Moto X3m Spooky Land", "f": "moto-x3m-spooky-land.html", "s": "moto-x3m-spooky-land", "c": "Racing"},
+  {"t": "Moto X3m Winter", "f": "moto-x3m-winter.html", "s": "moto-x3m-winter", "c": "Racing"},
+  {"t": "Noob Miner", "f": "noob-miner.html", "s": "noob-miner", "c": "Strategy"},
+  {"t": "Opposite Day", "f": "opposite-day.html", "s": "opposite-day", "c": "Puzzle"},
+  {"t": "OvO", "f": "ovo.html", "s": "ovo", "c": "Platformer"},
+  {"t": "OvO 2", "f": "ovo-2.html", "s": "ovo-2", "c": "Platformer"},
+  {"t": "OvO 3 Dimensions", "f": "ovo-3-dimensions.html", "s": "ovo-3-dimensions", "c": "Platformer"},
+  {"t": "Pac-Man", "f": "pac-man.html", "s": "pac-man", "c": "Platformer"},
+  {"t": "Papas Bakeria", "f": "papas-bakeria.html", "s": "papas-bakeria", "c": "Cooking"},
+  {"t": "Papas Burgeria", "f": "papas-burgeria.html", "s": "papas-burgeria", "c": "Cooking"},
+  {"t": "Papas Cheeseria", "f": "papas-cheeseria.html", "s": "papas-cheeseria", "c": "Cooking"},
+  {"t": "Papas Cupcakeria", "f": "papas-cupcakeria.html", "s": "papas-cupcakeria", "c": "Cooking"},
+  {"t": "Papas Donuteria", "f": "papas-donuteria.html", "s": "papas-donuteria", "c": "Cooking"},
+  {"t": "Papas Freezeria", "f": "papas-freezeria.html", "s": "papas-freezeria", "c": "Cooking"},
+  {"t": "Papas Hot Doggeria", "f": "papas-hot-doggeria.html", "s": "papas-hot-doggeria", "c": "Cooking"},
+  {"t": "Papas Pancakeria", "f": "papas-pancakeria.html", "s": "papas-pancakeria", "c": "Cooking"},
+  {"t": "Papas Pastaria", "f": "papas-pastaria.html", "s": "papas-pastaria", "c": "Cooking"},
+  {"t": "Papas Pizzeria", "f": "papas-pizzeria.html", "s": "papas-pizzeria", "c": "Cooking"},
+  {"t": "Papas Scooperia", "f": "papas-scooperia.html", "s": "papas-scooperia", "c": "Cooking"},
+  {"t": "Papas Sushiria", "f": "papas-sushiria.html", "s": "papas-sushiria", "c": "Cooking"},
+  {"t": "Papas Taco Mia", "f": "papas-taco-mia.html", "s": "papas-taco-mia", "c": "Cooking"},
+  {"t": "Papas Wingeria", "f": "papas-wingeria.html", "s": "papas-wingeria", "c": "Cooking"},
+  {"t": "Paper.io 2", "f": "paper-io-2.htm", "s": "paper-io-2", "c": "Multiplayer"},
+  {"t": "Parking Fury", "f": "parking-fury.html", "s": "parking-fury", "c": "Racing"},
+  {"t": "Parking Fury 2", "f": "parking-fury-2.html", "s": "parking-fury-2", "c": "Racing"},
+  {"t": "Parking Fury 3", "f": "parking-fury-3.html", "s": "parking-fury-3", "c": "Racing"},
+  {"t": "Pico's School", "f": "picos-school.html", "s": "picos-school", "c": "Shooter"},
+  {"t": "Ping Pong Chaos", "f": "ping-pong-chaos.html", "s": "ping-pong-chaos", "c": "Sports", "p": 1},
+  {"t": "Pixel Speedrun", "f": "pixel-speedrun.html", "s": "pixel-speedrun", "c": "Platformer"},
+  {"t": "Plants vs Zombies", "f": "plants-vs-zombies.html", "s": "plants-vs-zombies", "c": "Strategy"},
+  {"t": "Plonky", "f": "plonky.html", "s": "plonky", "c": "Puzzle"},
+  {"t": "Polytrack", "f": "polytrack.html", "s": "polytrack", "c": "Racing"},
+  {"t": "Poor Bunny", "f": "poor-bunny.html", "s": "poor-bunny", "c": "Platformer"},
+  {"t": "Pou", "f": "pou.html", "s": "pou", "c": "Sandbox"},
+  {"t": "Ragdoll Archers", "f": "ragdoll-archers.htm", "s": "ragdoll-archers", "c": "Shooter"},
+  {"t": "Ragdoll Hit", "f": "ragdoll-hit.html", "s": "ragdoll-hit", "c": "Sandbox"},
+  {"t": "Ragdoll Soccer", "f": "ragdoll-soccer.html", "s": "ragdoll-soccer", "c": "Sports", "p": 1},
+  {"t": "Red Ball 4 Vol. 1", "f": "red-ball-4-vol-1.html", "s": "red-ball-4-vol-1", "c": "Platformer"},
+  {"t": "Red Ball 4 Vol. 2", "f": "red-ball-4-vol-2.html", "s": "red-ball-4-vol-2", "c": "Platformer"},
+  {"t": "Red Ball 4 Vol. 3", "f": "red-ball-4-vol-3.html", "s": "red-ball-4-vol-3", "c": "Platformer"},
+  {"t": "Retro Bowl", "f": "retro-bowl.html", "s": "retro-bowl", "c": "Sports"},
+  {"t": "Retro Bowl College", "f": "retro-bowl-college.html", "s": "retro-bowl-college", "c": "Sports"},
+  {"t": "Retro Highway", "f": "retro-highway.html", "s": "retro-highway", "c": "Racing"},
+  {"t": "Retro Ping Pong", "f": "retro-ping-pong.html", "s": "retro-ping-pong", "c": "Sports"},
+  {"t": "Riddle School", "f": "riddle-school.html", "s": "riddle-school", "c": "Puzzle"},
+  {"t": "Riddle School 2", "f": "riddle-school-2.html", "s": "riddle-school-2", "c": "Puzzle"},
+  {"t": "Riddle School 3", "f": "riddle-school-3.html", "s": "riddle-school-3", "c": "Puzzle"},
+  {"t": "Riddle School 4", "f": "riddle-school-4.html", "s": "riddle-school-4", "c": "Puzzle"},
+  {"t": "Riddle School 5", "f": "riddle-school-5.html", "s": "riddle-school-5", "c": "Puzzle"},
+  {"t": "Riddle Transfer", "f": "riddle-transfer.html", "s": "riddle-transfer", "c": "Puzzle"},
+  {"t": "Riddle Transfer 2", "f": "riddle-transfer-2.html", "s": "riddle-transfer-2", "c": "Puzzle"},
+  {"t": "Rocket Soccer Derby", "f": "rocket-soccer-derby.html", "s": "rocket-soccer-derby", "c": "Sports"},
+  {"t": "Rooftop Snipers", "f": "rooftop-snipers.htm", "s": "rooftop-snipers", "c": "Shooter", "p": 1},
+  {"t": "Rooftop Snipers 2", "f": "rooftop-snipers-2.html", "s": "rooftop-snipers-2", "c": "Shooter", "p": 1},
+  {"t": "Run", "f": "run.html", "s": "run", "c": "Platformer"},
+  {"t": "Run 2", "f": "run-2.html", "s": "run-2", "c": "Platformer"},
+  {"t": "Run 3", "f": "run-3.html", "s": "run-3", "c": "Platformer"},
+  {"t": "Sand Game", "f": "sand-game.html", "s": "sand-game", "c": "Puzzle"},
+  {"t": "Short Life", "f": "short-life.html", "s": "short-life", "c": "Platformer"},
+  {"t": "Slope", "f": "slope.html", "s": "slope", "c": "Platformer"},
+  {"t": "Slope 2 Player", "f": "slope-2-player.html", "s": "slope-2-player", "c": "Platformer", "p": 1},
+  {"t": "Slope 3", "f": "slope-3.html", "s": "slope-3", "c": "Platformer"},
+  {"t": "Slow Roads", "f": "slow-roads.html", "s": "slow-roads", "c": "Racing"},
+  {"t": "Snow Rider", "f": "snow-rider.htm", "s": "snow-rider", "c": "Racing"},
+  {"t": "Snow Road", "f": "snow-road.htm", "s": "snow-road", "c": "Racing"},
+  {"t": "Snowball.io", "f": "snowball-io.html", "s": "snowball-io", "c": "Multiplayer"},
+  {"t": "Soccer Bros", "f": "soccer-bros.html", "s": "soccer-bros", "c": "Sports", "p": 1},
+  {"t": "Soccer Random", "f": "soccer-random.htm", "s": "soccer-random", "c": "Sports", "p": 1},
+  {"t": "Space is Key", "f": "space-is-key.html", "s": "space-is-key", "c": "Platformer"},
+  {"t": "Space is Key 2", "f": "space-is-key-2.html", "s": "space-is-key-2", "c": "Platformer"},
+  {"t": "Space Waves", "f": "space-waves.html", "s": "space-waves", "c": "Platformer"},
+  {"t": "Spacebar Clicker", "f": "spacebar-clicker.html", "s": "spacebar-clicker", "c": "Idle"},
+  {"t": "Speed Stars", "f": "speed-stars.html", "s": "speed-stars", "c": "Sports"},
+  {"t": "Sprunki", "f": "sprunki.html", "s": "sprunki", "c": "Platformer"},
+  {"t": "Stack", "f": "stack.html", "s": "stack", "c": "Puzzle"},
+  {"t": "Stacktris", "f": "stacktris.html", "s": "stacktris", "c": "Puzzle"},
+  {"t": "State.io", "f": "state-io.html", "s": "state-io", "c": "Multiplayer"},
+  {"t": "Stick Archers Battle", "f": "stick-archers-battle.html", "s": "stick-archers-battle", "c": "Shooter"},
+  {"t": "Stick Fighter", "f": "stick-fighter.html", "s": "stick-fighter", "c": "Sandbox", "p": 1},
+  {"t": "Stick Merge", "f": "stick-merge.html", "s": "stick-merge", "c": "Strategy"},
+  {"t": "Stickman Hook", "f": "stickman-hook.html", "s": "stickman-hook", "c": "Platformer"},
+  {"t": "Subway Surfers Beijing", "f": "subway-surfers-beijing.html", "s": "subway-surfers-beijing", "c": "Platformer"},
+  {"t": "Subway Surfers Havana", "f": "subway-surfers-havana.html", "s": "subway-surfers-havana", "c": "Platformer"},
+  {"t": "Subway Surfers San Francisco", "f": "subway-surfers-san-francisco.html", "s": "subway-surfers-san-francisco", "c": "Platformer"},
+  {"t": "Super Bike the Champion", "f": "super-bike-the-champion.html", "s": "super-bike-the-champion", "c": "Racing"},
+  {"t": "Super Liquid Soccer", "f": "super-liquid-soccer.html", "s": "super-liquid-soccer", "c": "Sports"},
+  {"t": "Super Mario 63", "f": "sm-63.html", "s": "sm-63", "c": "Platformer"},
+  {"t": "Super Mario 64", "f": "sm-64.html", "s": "sm-64", "c": "Platformer"},
+  {"t": "Super Star Car", "f": "super-star-car.html", "s": "super-star-car", "c": "Racing"},
+  {"t": "SUPERHOT", "f": "superhot.html", "s": "superhot", "c": "Shooter"},
+  {"t": "Table Tennis World Tour", "f": "table-tennis-world-tour.html", "s": "table-tennis-world-tour", "c": "Sports"},
+  {"t": "Tag", "f": "tag.html", "s": "tag", "c": "Sandbox", "p": 1},
+  {"t": "Tap Road", "f": "tap-road.html", "s": "tap-road", "c": "Racing"},
+  {"t": "Temple of Boom", "f": "temple-of-boom.html", "s": "temple-of-boom", "c": "Shooter"},
+  {"t": "Temple Run 2", "f": "temple-run-2.htm", "s": "temple-run-2", "c": "Platformer"},
+  {"t": "Territorial.io", "f": "territorial-io.html", "s": "territorial-io", "c": "Multiplayer"},
+  {"t": "The Impossible Quiz", "f": "the-impossible-quiz.html", "s": "the-impossible-quiz", "c": "Puzzle"},
+  {"t": "The Impossible Quiz 2", "f": "the-impossible-quiz-2.html", "s": "the-impossible-quiz-2", "c": "Puzzle"},
+  {"t": "There Is No Game", "f": "there-is-no-g.html", "s": "there-is-no-g", "c": "Puzzle"},
+  {"t": "They Are Coming", "f": "they-are-coming.html", "s": "they-are-coming", "c": "Horror"},
+  {"t": "This is the Only Level", "f": "this-is-the-only-level.html", "s": "this-is-the-only-level", "c": "Puzzle"},
+  {"t": "This is the Only Level Too", "f": "this-is-the-only-level-too.html", "s": "this-is-the-only-level-too", "c": "Puzzle"},
+  {"t": "Time Shooter 2", "f": "time-shooter-2.html", "s": "time-shooter-2", "c": "Shooter"},
+  {"t": "Time Shooter 3", "f": "time-shooter-3.htm", "s": "time-shooter-3", "c": "Shooter"},
+  {"t": "Tiny Fishing", "f": "tiny-fishing.html", "s": "tiny-fishing", "c": "Strategy"},
+  {"t": "Tomb of the Mask", "f": "tomb-of-the-mask.htm", "s": "tomb-of-the-mask", "c": "Platformer"},
+  {"t": "Trap the Cat", "f": "trap-the-cat.html", "s": "trap-the-cat", "c": "Puzzle"},
+  {"t": "Trivia Crack", "f": "trivia-crack.html", "s": "trivia-crack", "c": "Puzzle"},
+  {"t": "Tube Jumpers", "f": "tube-jumpers.html", "s": "tube-jumpers", "c": "Platformer", "p": 1},
+  {"t": "Tunnel Rush", "f": "tunnel-rush.html", "s": "tunnel-rush", "c": "Platformer"},
+  {"t": "Unicycle Hero", "f": "unicycle-hero.html", "s": "unicycle-hero", "c": "Racing"},
+  {"t": "Vex 4", "f": "vex-4.html", "s": "vex-4", "c": "Racing"},
+  {"t": "Vex 5", "f": "vex-5.html", "s": "vex-5", "c": "Racing"},
+  {"t": "Vex 6", "f": "vex-6.htm", "s": "vex-6", "c": "Racing"},
+  {"t": "Vex 7", "f": "vex-7.htm", "s": "vex-7", "c": "Racing"},
+  {"t": "Vex 8", "f": "vex-8.htm", "s": "vex-8", "c": "Racing"},
+  {"t": "Vex X3M", "f": "vex-x3m.html", "s": "vex-x3m", "c": "Racing"},
+  {"t": "Vex X3M 2", "f": "vex-x3m-2.html", "s": "vex-x3m-2", "c": "Racing"},
+  {"t": "Volley Random", "f": "volley-random.html", "s": "volley-random", "c": "Sports", "p": 1},
+  {"t": "War the Knights", "f": "war-the-knights.html", "s": "war-the-knights", "c": "Shooter"},
+  {"t": "We Become What We Behold", "f": "we-become-what-we-behold.html", "s": "we-become-what-we-behold", "c": "Sandbox"},
+  {"t": "Wheelie Bike", "f": "wheelie-bike.html", "s": "wheelie-bike", "c": "Racing"},
+  {"t": "Wheely", "f": "wheely.html", "s": "wheely", "c": "Puzzle"},
+  {"t": "Wheely 2", "f": "wheely-2.html", "s": "wheely-2", "c": "Puzzle"},
+  {"t": "Wheely 3", "f": "wheely-3.html", "s": "wheely-3", "c": "Puzzle"},
+  {"t": "Wheely 4", "f": "wheely-4.html", "s": "wheely-4", "c": "Puzzle"},
+  {"t": "Wheely 5", "f": "wheely-5.html", "s": "wheely-5", "c": "Puzzle"},
+  {"t": "Wheely 6", "f": "wheely-6.html", "s": "wheely-6", "c": "Puzzle"},
+  {"t": "Wheely 7", "f": "wheely-7.html", "s": "wheely-7", "c": "Puzzle"},
+  {"t": "Wheely 8", "f": "wheely-8.html", "s": "wheely-8", "c": "Puzzle"},
+  {"t": "Wordle Unlimited", "f": "wordle-unlimited.html", "s": "wordle-unlimited", "c": "Puzzle"},
+  {"t": "World's Hardest Game", "f": "worlds-hardest-game.html", "s": "worlds-hardest-game", "c": "Platformer"},
+  {"t": "World's Hardest Game 2", "f": "worlds-hardest-game-2.html", "s": "worlds-hardest-game-2", "c": "Platformer"},
+  {"t": "World's Hardest Game 3", "f": "worlds-hardest-game-3.html", "s": "worlds-hardest-game-3", "c": "Platformer"},
+  {"t": "Wrestle Bros", "f": "wrestle-bros.html", "s": "wrestle-bros", "c": "Sports", "p": 1},
+  {"t": "Zombie Rush", "f": "zombie-rush.html", "s": "zombie-rush", "c": "Horror"}
+];
 
-        <!-- GAME 5 -->
-        <a href="https://example.com/game5" class="game-card">
-            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
-            <div class="img-placeholder">🖼️ Add Picture Here</div>
-            <div class="card-info">
-                <h3>Block Puzzle</h3>
-                <p>Puzzle / Casual</p>
-                <span class="play-btn">Play Now &rarr;</span>
-            </div>
-        </a>
+const FOLDER = "offline/";
+const IMAGES = "images/";
+const PIN_KEY = "gamepage.pinned";
 
-        <!-- GAME 6 -->
-        <a href="https://example.com/game6" class="game-card">
-            <!-- 👇 PUT YOUR PICTURE HERE 👇 -->
-            <div class="img-placeholder">🖼️ Add Picture Here</div>
-            <div class="card-info">
-                <h3>Arena Shooter</h3>
-                <p>Action / Multiplayer</p>
-                <span class="play-btn">Play Now &rarr;</span>
-            </div>
-        </a>
+const grid = document.getElementById("grid");
+const pinnedGrid = document.getElementById("pinned");
+const pinnedWrap = document.getElementById("pinned-wrap");
+const chipsBox = document.getElementById("chips");
+const countEl = document.getElementById("count");
+const emptyEl = document.getElementById("empty");
+const allSub = document.getElementById("all-sub");
+const q = document.getElementById("q");
 
-    </main>
+let pinned = [];
+try { pinned = JSON.parse(localStorage.getItem(PIN_KEY)) || []; } catch (e) { pinned = []; }
+let activeCat = "All";
 
-    <!-- Message shown if no game matches the search -->
-    <p id="no-results">No games found.</p>
+function savePins(){
+  try { localStorage.setItem(PIN_KEY, JSON.stringify(pinned)); } catch (e) {}
+}
 
-    <!-- JavaScript for Live Search Functionality -->
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const gameCards = document.querySelectorAll('.game-card');
-        const noResultsMsg = document.getElementById('no-results');
+function initials(title){
+  const words = title.replace(/[^A-Za-z0-9 ]/g, " ").split(/\s+/).filter(Boolean);
+  if (!words.length) return "??";
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+}
 
-        searchInput.addEventListener('input', function() {
-            const query = searchInput.value.toLowerCase().trim();
-            let matchesFound = 0;
+function card(g){
+  const a = document.createElement("a");
+  a.className = "card";
+  a.href = FOLDER + g.f;
+  a.style.setProperty("--accent", `var(--c-${g.c}, #9fb0d0)`);
 
-            gameCards.forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                const genre = card.querySelector('p').textContent.toLowerCase();
+  const img = new Image();
+  img.src = IMAGES + g.s + ".PNG";
+  img.alt = "";
+  img.loading = "lazy";
+  img.addEventListener("error", () => img.setAttribute("data-broken", ""));
 
-                // Check if title or genre contains search query
-                if (title.includes(query) || genre.includes(query)) {
-                    card.style.display = 'flex';
-                    matchesFound++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+  const thumb = document.createElement("div");
+  thumb.className = "thumb";
+  const ini = document.createElement("span");
+  ini.className = "initials";
+  ini.textContent = initials(g.t);
+  thumb.append(ini, img);
 
-            // Show "No games found" message if search result is empty
-            if (matchesFound === 0) {
-                noResultsMsg.style.display = 'block';
-            } else {
-                noResultsMsg.style.display = 'none';
-            }
-        });
-    </script>
+  const pin = document.createElement("button");
+  pin.className = "pin";
+  pin.type = "button";
+  pin.title = "Pin to the top";
+  pin.setAttribute("aria-label", "Pin " + g.t);
+  const on = pinned.includes(g.s);
+  pin.setAttribute("aria-pressed", on ? "true" : "false");
+  pin.textContent = on ? "★" : "☆";
+  pin.addEventListener("click", e => {
+    e.preventDefault();
+    const i = pinned.indexOf(g.s);
+    if (i > -1) pinned.splice(i, 1); else pinned.unshift(g.s);
+    savePins();
+    render();
+  });
 
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  const h3 = document.createElement("h3");
+  h3.textContent = g.t;
+  const p = document.createElement("p");
+  p.textContent = g.c;
+  if (g.p) {
+    const tp = document.createElement("span");
+    tp.className = "tp";
+    tp.textContent = "2P";
+    p.append(" ", tp);
+  }
+  meta.append(h3, p);
+
+  a.append(pin, thumb, meta);
+  return a;
+}
+
+function buildChips(){
+  const cats = ["All", ...[...new Set(GAMES.map(g => g.c))].sort()];
+  cats.forEach(c => {
+    const b = document.createElement("button");
+    b.className = "chip";
+    b.type = "button";
+    b.setAttribute("aria-pressed", c === activeCat ? "true" : "false");
+    if (c !== "All") {
+      const dot = document.createElement("i");
+      dot.style.setProperty("--dot", `var(--c-${c}, #9fb0d0)`);
+      b.append(dot);
+    }
+    b.append(document.createTextNode(c === "All" ? "All games" : c));
+    b.addEventListener("click", () => {
+      activeCat = c;
+      [...chipsBox.children].forEach(x => x.setAttribute("aria-pressed", "false"));
+      b.setAttribute("aria-pressed", "true");
+      render();
+    });
+    chipsBox.append(b);
+  });
+}
+
+function matches(g, term){
+  if (activeCat !== "All" && g.c !== activeCat) return false;
+  if (!term) return true;
+  return (g.t + " " + g.c + " " + g.s).toLowerCase().includes(term);
+}
+
+let visible = [];
+
+function render(){
+  const term = q.value.toLowerCase().trim();
+  visible = GAMES.filter(g => matches(g, term));
+
+  grid.replaceChildren(...visible.map(card));
+
+  const pins = pinned.map(s => GAMES.find(g => g.s === s)).filter(Boolean);
+  pinnedWrap.classList.toggle("empty", pins.length === 0);
+  if (pins.length) pinnedGrid.replaceChildren(...pins.map(card));
+
+  emptyEl.style.display = visible.length ? "none" : "block";
+  countEl.textContent = visible.length === GAMES.length
+    ? GAMES.length + " games"
+    : visible.length + " of " + GAMES.length;
+  allSub.textContent = activeCat === "All" ? "" : activeCat.toLowerCase();
+}
+
+q.addEventListener("input", render);
+q.addEventListener("keydown", e => {
+  if (e.key === "Enter" && visible.length) window.location.href = FOLDER + visible[0].f;
+  if (e.key === "Escape") { q.value = ""; render(); }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); }
+});
+document.getElementById("clear").addEventListener("click", () => {
+  q.value = ""; activeCat = "All";
+  [...chipsBox.children].forEach((x, i) => x.setAttribute("aria-pressed", i === 0 ? "true" : "false"));
+  render();
+  q.focus();
+});
+
+buildChips();
+render();
+</script>
 </body>
 </html>
